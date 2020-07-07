@@ -28,13 +28,6 @@ color ray_color(const ray&r) {
     return (1.0-t)*color(1.0, 1.0, 1.0) + t*color(0.5, 0.7, 1.0);
 }
 
-color ray_color_debug( point3 pixel ) {
-    if( abs(pixel.x() - 0.5) < 0.00001 && abs(pixel.y() - 0.5) < 0.00001  ) {
-        return color( 1, 0, 0 );
-    }
-    return color( 0, 1, 0 );
-}
-
 int main() {
     const auto aspect_ratio = 16.0 / 9.0;
 	const int image_width = 384;

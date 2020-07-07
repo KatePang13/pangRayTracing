@@ -4,6 +4,14 @@
 
 #include <iostream>
 
+bool hit_spehre(const point3& center, double radius, const ray& r) {
+    vec3 oc = r.origin() - center; 
+    auto a = dot(r.direction(), r.direction());
+    auto b = 2.0 * dot(oc, r.direction());
+    auto c = dot(oc, oc) - radius*radius;
+    return (b*b - 4*a*c > 0);
+}
+
 /*
 The ray_color(ray) function linearly blends white and blue depending on 
 the height of the y coordinate after scaling the ray direction to unit length (so −1.0<y<1.0). 
@@ -11,9 +19,20 @@ Because we're looking at the y height after normalizing the vector,
 you'll notice a horizontal gradient to the color in addition to the vertical gradient.
 */
 color ray_color(const ray&r) {
+    if( hit_spehre(point3(0, 0, -1), 0.5, r) ) {
+        return color(1, 0, 0);
+    }
+
     vec3 unit_direction = unit_vector(r.direction());
     auto t = 0.5*(unit_direction.y() + 1.0);
     return (1.0-t)*color(1.0, 1.0, 1.0) + t*color(0.5, 0.7, 1.0);
+}
+
+color ray_color_debug( point3 pixel ) {
+    if( abs(pixel.x() - 0.5) < 0.00001 && abs(pixel.y() - 0.5) < 0.00001  ) {
+        return color( 1, 0, 0 );
+    }
+    return color( 0, 1, 0 );
 }
 
 int main() {

@@ -163,4 +163,18 @@ using color = vec3;     //RGB
         return r_out_parallel + r_out_perp;
     }
 
+    /*
+    Schlick Approximation
+    Now real glass has reflectivity that varies with angle — 
+    look at a window at a steep angle and it becomes a mirror. 
+    There is a big ugly equation for that, 
+    but almost everybody uses a cheap and surprisingly accurate polynomial approximation 
+    by Christophe Schlick
+    */
+    double schlick(double cosine, double ref_idx) {
+        auto r0 = (1-ref_idx) / (1+ref_idx) ;
+        r0 = r0*r0;
+        return r0 + (1-r0)*pow((1 - cosine), 5);
+    }
+
 #endif

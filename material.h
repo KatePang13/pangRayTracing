@@ -57,14 +57,22 @@ public:
         double cos_theta = fmin(dot(-unit_direction, rec.normal), 1.0);
         double sin_theta = sqrt( 1.0 - cos_theta*cos_theta );
         
-        //反射;
+        //reflect;
         if( etai_over_etat * sin_theta > 1.0 ) {
-            vec3 refrected = reflect(unit_direction, rec.normal);
-            scattered = ray(rec.p, refrected);
+            vec3 reflected = reflect(unit_direction, rec.normal);
+            scattered = ray(rec.p, reflected);
             return true;
         }
 
-        //折射;
+        //schlick
+        double reflect_prob = schlick(cos_theta, etai_over_etat);
+        if( random_double() < reflect_prob ) {
+            vec3 reflected = reflect(unit_direction, rec.normal);
+            scattered = ray(rec.p, reflected);
+            return true;
+        }
+
+        //refracted;
         vec3 refracted = refract(unit_direction, rec.normal, etai_over_etat);
         scattered = ray(rec.p, refracted);
         return true;

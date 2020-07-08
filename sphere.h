@@ -7,7 +7,7 @@
 class sphere : public hittable {
 public:
     sphere() {}
-    sphere( point3 c, double r, shared_ptr<meterial> m ) 
+    sphere( point3 c, double r, shared_ptr<material> m ) 
         : center(c), radius(r), material_ptr(m) {};
 
     virtual bool hit( const ray& r, double t_min, double t_max, hit_record& rec) const;
@@ -15,7 +15,7 @@ public:
 public:
     point3 center;
     double radius;
-    shared_ptr<meterial> material_ptr;
+    shared_ptr<material> material_ptr;
 };
 
 bool sphere::hit( const ray& r, double t_min, double t_max, hit_record& rec) const {

@@ -5,12 +5,12 @@
 #include "vec3.h"
 #include "hittable.h"
 
-class meterial {
+class material {
 public:
     virtual bool scatter(const ray& r_in, hit_record& rec, color& attenuation, ray& scattered) const =0;
 };
 
-class lambertian : public meterial {
+class lambertian : public material {
 public:
     lambertian(const color& a) : albedo(a) {};
     virtual bool scatter(const ray& r_in, hit_record& rec, color& attenuation, ray& scattered) const {
@@ -24,7 +24,7 @@ public:
     color albedo;
 };
 
-class metal : public meterial {
+class metal : public material {
 public:
     metal(const color& a) : albedo(a), fuzz(1.0) {};
     metal(const color& a, double f) : albedo(a), fuzz(f<1 ? f:1) {};
@@ -40,7 +40,7 @@ public:
     double fuzz;
 };
 
-class dielectric : public meterial {
+class dielectric : public material {
 public:
     dielectric(double ri) : ref_idx(ri) {}
     virtual bool scatter(const ray& r_in, hit_record& rec, color& attenuation, ray& scattered) const {

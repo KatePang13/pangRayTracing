@@ -119,6 +119,7 @@ using color = vec3;     //RGB
         return vec3(random_double(min,max), random_double(min,max), random_double(min,max));
     }
 
+    //随机取一个单位向量;
     vec3 random_unit_vector() {
         auto a = random_double(0, 2*pi);
         auto z = random_double(-1, 1);
@@ -135,6 +136,16 @@ using color = vec3;     //RGB
             }
             return p;
         }
+    }
+
+    //在单位半球内随机选取1点(与法线在同一个半球)
+    vec3 random_in_hemisphere(const vec3& normal) {
+        vec3 in_unit_sphere = random_in_unit_sphere();
+        if( dot(in_unit_sphere, normal) > 0.0 ) {
+            return in_unit_sphere;
+        }
+
+        return ~in_unit_sphere;
     }
 
 #endif

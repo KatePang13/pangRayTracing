@@ -26,16 +26,18 @@ public:
 
 class metal : public meterial {
 public:
-    metal(const color& a) : albedo(a) {};
+    metal(const color& a) : albedo(a), fuzz(1.0) {};
+    metal(const color& a, double f) : albedo(a), fuzz(f<1 ? f:1) {};
     virtual bool scatter(const ray& r_in, hit_record& rec, color& attenuation, ray& sattered) const {
         vec3 reflect_direction = reflect( unit_vector(r_in.direction()), rec.normal );
-        sattered = ray( rec.p, reflect_direction );
+        sattered = ray( rec.p, reflect_direction + fuzz*random_in_unit_sphere() );
         attenuation = albedo;
         return  dot(sattered.direction(), rec.normal) > 0;
     } 
 
 public:
     color albedo;
+    double fuzz;
 };
 
 #endif

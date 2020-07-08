@@ -1,9 +1,10 @@
 #ifndef VEC3_H
 #define VEC3_H
 
+#include "rtweekend.h"
+
 #include <cmath>
 #include <iostream>
-#include <random>
 
 class vec3 {
 public:
@@ -110,32 +111,25 @@ using color = vec3;     //RGB
         return v / v.length();
     }
 
-    //inline double random_double() {
-    //    return rand() / (RAND_MAX + 1.0);
-    //}
-
-    inline double random_double() {
-        static std::uniform_real_distribution<double> distribution(0.0, 1.0);
-        static std::mt19937 generator;
-        return distribution(generator);
-    }
-
-    inline double random_double( double min, double max ) {
-        return min + (max-min)*random_double();
-    }
-
-    inline vec3 randomVec() {
+    inline vec3 random_vector() {
         return vec3(random_double(), random_double(), random_double());
     }
 
-    inline vec3 randomVec( double min, double max ) {
+    inline vec3 random_vector( double min, double max ) {
         return vec3(random_double(min,max), random_double(min,max), random_double(min,max));
     }
 
-    //在单位球上内随机选取1点
+    vec3 random_unit_vector() {
+        auto a = random_double(0, 2*pi);
+        auto z = random_double(-1, 1);
+        auto r = sqrt(1-z*z);
+        return vec3(r*cos(a), r*sin(a), z);
+    }
+
+    //在单位球内随机选取1点
     vec3 random_in_unit_sphere() {
         while( true ) {
-            auto p = randomVec(-1, 1);
+            auto p = random_vector(-1, 1);
             if( p.length_squared() >= 1 ) {
                 continue;
             }

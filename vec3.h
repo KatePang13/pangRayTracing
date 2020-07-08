@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <iostream>
+#include <random>
 
 class vec3 {
 public:
@@ -107,6 +108,39 @@ using color = vec3;     //RGB
 
     inline vec3 unit_vector(vec3 v) {
         return v / v.length();
+    }
+
+    //inline double random_double() {
+    //    return rand() / (RAND_MAX + 1.0);
+    //}
+
+    inline double random_double() {
+        static std::uniform_real_distribution<double> distribution(0.0, 1.0);
+        static std::mt19937 generator;
+        return distribution(generator);
+    }
+
+    inline double random_double( double min, double max ) {
+        return min + (max-min)*random_double();
+    }
+
+    inline vec3 randomVec() {
+        return vec3(random_double(), random_double(), random_double());
+    }
+
+    inline vec3 randomVec( double min, double max ) {
+        return vec3(random_double(min,max), random_double(min,max), random_double(min,max));
+    }
+
+    //在单位球上内随机选取1点
+    vec3 random_in_unit_sphere() {
+        while( true ) {
+            auto p = randomVec(-1, 1);
+            if( p.length_squared() >= 1 ) {
+                continue;
+            }
+            return p;
+        }
     }
 
 #endif

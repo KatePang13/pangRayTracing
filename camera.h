@@ -5,9 +5,10 @@
 
 class camera {
 public:
-    camera() {
-        auto aspect_ratio = 16.0/9.0 ;
-        auto viewport_height = 2.0;
+    camera(double vfov, double aspect_ratio) {
+        auto theta = degrees_to_radians(vfov);
+        auto h = tan(theta*0.5);
+        auto viewport_height = 2.0*h;
         auto viewport_weight = aspect_ratio* viewport_height;
         int focal_length = 1.0;
 

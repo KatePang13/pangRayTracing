@@ -2,36 +2,20 @@
 #include "color.h"
 #include "ray.h"
 
+#include "rtweekend.h"
+#include "hittable_list.h"
+#include "sphere.h"
+
 #include <iostream>
 
-double hit_sphere(const point3& center, double radius, const ray& r) {
-    vec3 oc = r.origin() - center; 
-    auto a = r.direction().length_squared();
-    auto half_b = dot(oc, r.direction());
-    auto c = oc.length_squared() - radius*radius;
-    auto discriminant = half_b*half_b - a*c;
-    if (discriminant < 0.0) {
-        return -1.0;
-    } else {
-        return (-half_b - sqrt(discriminant) ) / a;
-    }
-}
-
-/*
-The ray_color(ray) function linearly blends white and blue depending on 
-the height of the y coordinate after scaling the ray direction to unit length (so −1.0<y<1.0). 
-Because we're looking at the y height after normalizing the vector, 
-you'll notice a horizontal gradient to the color in addition to the vertical gradient.
-*/
-color ray_color(const ray&r) {
-    auto t = hit_sphere(point3(0,0,-1), 0.5, r);
-    if (t > 0.0) {
-        vec3 N = unit_vector(r.at(t) - vec3(0,0,-1));//球面的法线即圆心到球面上点的连线;
-        return 0.5*color(N.x()+1, N.y()+1, N.z()+1);//目前还没有引入光源，使用法线简单的映射颜色;
+color ray_color(const ray&r, const hittable& world) {
+    hit_record rec;
+    if( world.hit(r, 0, infinity, rec) ) {
+        return 0.5* ( rec.normal + color(1,1,1));
     }
 
     vec3 unit_direction = unit_vector(r.direction());
-    t = 0.5*(unit_direction.y() + 1.0);
+    auto t = 0.5*(unit_direction.y() + 1.0);
     return (1.0-t)*color(1.0, 1.0, 1.0) + t*color(0.5, 0.7, 1.0);
 }
 
@@ -51,6 +35,10 @@ int main() {
     auto vertical = vec3(0, viewport_height, 0);
     auto lower_left_corner = origin - horizontal/2 - vertical/2 - vec3(0, 0, focal_length);
 
+    hittable_list world;
+    world.add( make_shared<sphere>(point3(0,0,-1), 0.5) );
+    world.add( make_shared<sphere>(point3(0,-100.5,-1), 100) );
+
     for( int j = image_height-1; j >=0; --j ) {
         std::cerr << "\rScanlines remaining: " << j << ' ' << std::flush;
         for(int i = 0; i<image_width; ++i) {
@@ -59,7 +47,7 @@ int main() {
             point3 pixel = lower_left_corner + u*horizontal + v*vertical;//屏幕上的点的二维坐标转换为三维坐标;
             vec3 direction = pixel - origin;//原点(视点)连到屏幕上一点，即是该点的光线方向;
             ray r(origin, direction);
-            write_color(std::cout, ray_color(r) );
+            write_color(std::cout, ray_color(r, world) );
         }
     }
     std::cerr << "\nDone.\n";

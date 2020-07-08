@@ -2,12 +2,14 @@
 #define HITTABLE_H
 
 #include "ray.h"
+class meterial;
 
 struct hit_record {
     point3 p;       //交点处-坐标;
     vec3 normal;    //交点处-平面法线;
     double t;       //交点处-光线t值;
-    bool front_face;
+    bool front_face;//朝向
+    shared_ptr<meterial> material_ptr;
 
     inline void set_face_normal(const ray& r, const vec3& outward_normal) {
         front_face = dot( r.direction(), outward_normal ) < 0 ;
